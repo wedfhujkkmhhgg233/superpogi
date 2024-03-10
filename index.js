@@ -1,6 +1,7 @@
 const express = require('express');
 const fs = require('fs');
 const app = express();
+const path = require('path');
 
 // Load the existing data from sim.json
 let simData = {};
@@ -79,6 +80,11 @@ function getRandomResponse(responses) {
   const randomIndex = Math.floor(Math.random() * responses.length);
   return responses[randomIndex];
 }
+
+// Serve the index.html file
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'index.html'));
+});
 
 // Define the port to run the server on
 const PORT = process.env.PORT || 3000;
