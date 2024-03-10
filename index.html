@@ -1,1 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sim API</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      overflow: hidden;
+      background: linear-gradient(to right, violet, indigo, blue, green, yellow, orange, red, violet);
+      background-size: 200% 200%;
+      animation: rainbow 10s linear infinite;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background-color: rgba(255, 255, 255, 0.8);
+      padding: 20px;
+      border-radius: 10px;
+      position: relative;
+      overflow: hidden;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    label {
+      font-weight: bold;
+    }
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+    }
+    button {
+      padding: 10px 20px;
+      background-color: #6600ff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-right: 10px;
+    }
+    button:hover {
+      background-color: #5600e3;
+    }
+    .response {
+      margin-top: 20px;
+    }
+    .credits {
+      background-color: rgba(255, 255, 255, 0.9);
+      padding: 10px 20px;
+      border-radius: 5px;
+      margin-top: 20px;
+      text-align: center;
+      color: #333;
+      background: linear-gradient(to right, violet, indigo, blue, green, yellow, orange, red, violet);
+      background-size: 200% 100%;
+      animation: rainbowCredits 10s linear infinite;
+    }
 
+    @keyframes rainbow {
+      0% {
+        background-position: 0% 50%;
+      }
+      50% {
+        background-position: 100% 50%;
+      }
+      100% {
+        background-position: 0% 50%;
+      }
+    }
+
+    @keyframes rainbowCredits {
+      0% {
+        background-position: 0% 50%;
+      }
+      50% {
+        background-position: 100% 50%;
+      }
+      100% {
+        background-position: 0% 50%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container" id="container">
+    <h1>Welcome to my Sim API</h1>
+    <form id="simForm">
+      <label for="question">Type your question:</label>
+      <input type="text" id="question" name="q" placeholder="Enter your question...">
+      <button type="submit">Ask</button>
+    </form>
+    <div class="response" id="response"></div>
+
+    <div class="teach-box">
+      <h2>Teach the API</h2>
+      <form id="teachForm">
+        <label for="teachQuestion">Question:</label>
+        <input type="text" id="teachQuestion" name="q" placeholder="Enter the question...">
+        <label for="teachResponse">Response:</label>
+        <input type="text" id="teachResponse" name="r" placeholder="Enter the response...">
+        <button type="submit">Teach</button>
+      </form>
+    </div>
+
+    <div class="credits">
+      <p style="color: rainbow;">Credits: Grey</p>
+    </div>
+  </div>
+
+  <script>
+    const simForm = document.getElementById('simForm');
+    const responseDiv = document.getElementById('response');
+    const teachForm = document.getElementById('teachForm');
+    const container = document.getElementById('container');
+
+    simForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData(simForm);
+      const query = formData.get('q');
+
+      container.style.opacity = '0.5';
+
+      try {
+        const response = await fetch(`/sim?q=${query}`);
+        const data = await response.json();
+        responseDiv.innerHTML = `<p><strong>Question:</strong> ${query}</p><p><strong>Response:</strong> ${data.response}</p>`;
+      } catch (error) {
+        responseDiv.innerHTML = '<p>Error fetching response.</p>';
+      } finally {
+        container.style.opacity = '1';
+      }
+    });
+
+    teachForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData(teachForm);
+      const question = formData.get('q');
+      const response = formData.get('r');
+
+      container.style.opacity = '0.5';
+
+      try {
+        const teachResponse = await fetch(`/teach?q=${encodeURIComponent(question)}&r=${encodeURIComponent(response)}`);
+        const teachData = await teachResponse.json();
+        responseDiv.innerHTML = `<p><strong>Successfully taught:</strong></p><p><strong>Question:</strong> ${question}</p><p><strong>Response:</strong> ${response}</p>`;
+      } catch (error) {
+        responseDiv.innerHTML = '<p>Error teaching.</p>';
+      } finally {
+        container.style.opacity = '1';
+      }
+    });
+  </script>
+</body>
+  </html>
